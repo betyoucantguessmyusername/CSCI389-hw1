@@ -32,7 +32,7 @@ uint32_t* shuffle(uint32_t buff_size, uint32_t iterations) {
 
 // returns avg time to generate+access rand. index array (+ read from buffer if numbers != NULL)
 double long calc_time(uint32_t buff_size, uint32_t iterations, uint8_t* numbers) {
-    uint32_t dummy;
+    uint32_t dummy = 0;
     clock_t start = clock();
     for(uint32_t j=0;j<iterations;j++) {
         uint32_t* shuffled = shuffle(buff_size, iterations);
@@ -40,14 +40,10 @@ double long calc_time(uint32_t buff_size, uint32_t iterations, uint8_t* numbers)
             if(numbers) {
                 dummy = numbers[shuffled[x]];
             } else {
-                dummy = shuffled[x];
-            }
-            dummy += 1;
-            // ensure dummy does not get optimized away
-            if(dummy == 0) {
-                printf("action");
+                dummy += shuffled[x];
             }
         }
+        free(shuffled);
     }
     clock_t end = clock();
     double long avg_time = (end - start)*NANOS_PER_SEC/((double)CLOCKS_PER_SEC*iterations*buff_size);
